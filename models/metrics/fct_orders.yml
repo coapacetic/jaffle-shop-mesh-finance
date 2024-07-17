@@ -1,0 +1,36 @@
+semantic_models:
+  - name: orders
+    defaults:
+      agg_time_dimension: ordered_at
+    description: |
+      Order fact table. This table’s grain is one row per order.
+    model: ref('orders')
+    entities:
+      - name: order_id
+        type: primary
+      - name: location_id
+        type: foreign
+      - name: customer_id
+        type: foreign
+    dimensions: 
+      - name: ordered_at
+        type: time
+        type_params:
+          time_granularity: day
+    measures:
+      - name: order_total
+        description: The total amount for each order including taxes.
+        agg: sum
+        expr: amount
+      - name: order_count
+        agg: sum
+        expr: 1
+
+
+metrics:
+  - name: "order_total"
+    description: "Sum of orders value"
+    type: simple
+    label: "order_total"
+    type_params:
+      measure: order_total
